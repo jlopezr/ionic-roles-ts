@@ -11,7 +11,7 @@ let localOptions = {
 
 let localLogin = new LocalStrategy(localOptions, function(email, password, done) {
 
-    console.log("Local Login: "+email+" "+password);
+    //console.log("Local Login: "+email+" "+password);
 
     User.findOne({
         email: email
@@ -52,11 +52,9 @@ let jwtOptions = {
 
 let jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 
-    console.log("JWT Login:", payload);
+    //console.log("JWT Login:", payload);
 
     User.findById(payload._id, function(err, user) {
-
-        console.log("ERR "+err+" USER "+user);
 
         if(err) {
             return done(err, false);

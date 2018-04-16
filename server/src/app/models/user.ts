@@ -21,7 +21,7 @@ export enum Role {
         if (err) {
             return next(err);
         }
-        bcrypt.hash(user.password, salt, null, function (err: Error, hash: string) {
+        bcrypt.hash(user.password, salt, function (err: Error, hash: string) {
             if (err) {
                 return next(err);
             }

@@ -25,10 +25,8 @@ function setUserInfo(request: Express.User) : UserInfo {
 }
 
 export function login(req: Request, res: Response, next: NextFunction) {
-
-    console.log("REQ.USER "+req.user);
-
-    let userInfo = setUserInfo(req.user);
+    // req.user is set in previously called requireAuth middleware
+    let userInfo = setUserInfo(req.user!);
 
     res.status(200).json({
         token: 'JWT ' + generateToken(userInfo),
@@ -90,7 +88,8 @@ export function roleAuthorization(roles: string[]) {
 
     return function(req: Request, res: Response, next: NextFunction) {
 
-        let user = req.user;
+        // req.user is set in previously called requireAuth middleware
+        let user = req.user!;
 
         User.findById(user._id, function(err, foundUser) {
 
@@ -99,7 +98,7 @@ export function roleAuthorization(roles: string[]) {
                 return next(err);
             }
 
-            if(roles.indexOf(foundUser.role) > -1) {
+            if(foundUser !== null && roles.indexOf(foundUser.role) > -1) {
                 return next();
             }
 
