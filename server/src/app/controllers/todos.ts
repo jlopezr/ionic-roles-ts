@@ -1,49 +1,36 @@
-var Todo = require('../models/todo');
+import {Request, Response, NextFunction} from "express";
+import {model as Todo, Todo as TodoType} from '../models/todo';
 
-exports.getTodos = function(req, res, next){
-
-    Todo.find(function(err, todos) {
-
-        if (err){
+export function getTodos(req: Request, res: Response, next: NextFunction) {
+    Todo.find(function (err, todos) {
+        if (err) {
             res.send(err);
         }
-
         res.json(todos);
 
     });
+};
 
-}
-
-exports.createTodo = function(req, res, next){
-
+export function createTodo(req: Request, res: Response, next: NextFunction) {
     Todo.create({
-        title : req.body.title
-    }, function(err, todo) {
-
-        if (err){
+        title: req.body.title
+    }, function (err: Error, todo: TodoType[]) {
+        if (err) {
             res.send(err);
         }
-
-        Todo.find(function(err, todos) {
-
-            if (err){
+        Todo.find(function (err, todos) {
+            if (err) {
                 res.send(err);
             }
-
             res.json(todos);
-
         });
-
     });
+};
 
-}
-
-exports.deleteTodo = function(req, res, next){
-
+export function deleteTodo(req: Request, res: Response, next: NextFunction) {
     Todo.remove({
-        _id : req.params.todo_id
-    }, function(err, todo) {
-        res.json(todo);
+        _id: req.params.todo_id
+    }, function (err) {
+        res.sendStatus(200);
     });
-
-}
+};

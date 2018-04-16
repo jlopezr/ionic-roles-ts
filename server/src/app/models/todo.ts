@@ -1,14 +1,8 @@
-var mongoose = require('mongoose');
+import { prop, Typegoose } from 'typegoose';
 
-var TodoSchema = new mongoose.Schema({
+export class Todo extends Typegoose {
+    @prop({required:true})
+    title!: string;
+}
 
-    title: {
-        type: String,
-        required: true
-    }
-
-}, {
-    timestamps: true
-});
-
-module.exports = mongoose.model('Todo', TodoSchema);
+export const model = new Todo().getModelForClass(Todo, {schemaOptions:{timestamps: true}});

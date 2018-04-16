@@ -1,15 +1,15 @@
-var passport = require('passport');
-var User = require('../app/models/user');
-var config = require('./auth');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
-var LocalStrategy = require('passport-local').Strategy;
+import * as passport from 'passport';
+import {model as User} from '../app/models/user';
+let config = require('./auth');
+import {Strategy as JwtStrategy, ExtractJwt} from "passport-jwt";
+import {Strategy as LocalStrategy} from 'passport-local';
+import {ObjectID} from "bson";
 
-var localOptions = {
+let localOptions = {
     usernameField: 'email'
 };
 
-var localLogin = new LocalStrategy(localOptions, function(email, password, done) {
+let localLogin = new LocalStrategy(localOptions, function(email, password, done) {
 
     console.log("Local Login: "+email+" "+password);
 
@@ -23,7 +23,7 @@ var localLogin = new LocalStrategy(localOptions, function(email, password, done)
 
         if(!user) {
             console.log("User not found");
-            return done(null, false, {error: 'Login failed. Please try again.'});
+            return done(null, false, {message: 'Login failed. Please try again.'});
         }
 
         user.comparePassword(password, function(err, isMatch) {
@@ -34,7 +34,7 @@ var localLogin = new LocalStrategy(localOptions, function(email, password, done)
 
             if(!isMatch) {
                 console.log("Password is not correct");
-                return done(null, false, {error: 'Login failed. Please try again.'});
+                return done(null, false, {message: 'Login failed. Please try again.'});
             }
 
             return done(null, user);
@@ -45,16 +45,18 @@ var localLogin = new LocalStrategy(localOptions, function(email, password, done)
 
 });
 
-var jwtOptions = {
+let jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeader(),
     secretOrKey: config.secret
 };
 
-var jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
+let jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 
-    console.log("JWT Login");
+    console.log("JWT Login:", payload);
 
     User.findById(payload._id, function(err, user) {
+
+        console.log("ERR "+err+" USER "+user);
 
         if(err) {
             return done(err, false);

@@ -1,69 +1,60 @@
-var mongoose = require('mongoose');
-var bcrypt   = require('bcrypt-nodejs');
+import * as bcrypt from 'bcrypt-nodejs';
+import {prop, pre, instanceMethod, Typegoose, InstanceType} from 'typegoose';
+import {NextFunction} from "express";
+import {ObjectID} from "bson";
 
-var UserSchema = new mongoose.Schema({
+export enum Role {
+    reader,
+    creator,
+    editor
+}
 
-    email: {
-        type: String,
-        lowercase: true,
-        unique: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    role: {
-        type: String,
-        enum: ['reader', 'creator', 'editor'],
-        default: 'reader'
-    }
+@pre<User>('save', function (next: NextFunction) {
+    let user = this;
+    let SALT_FACTOR = 5;
 
-}, {
-    timestamps: true
-});
-
-UserSchema.pre('save', function(next){
-
-    var user = this;
-    var SALT_FACTOR = 5;
-
-    if(!user.isModified('password')){
+    if (!user.isModified('password')) {
         return next();
     }
 
-    bcrypt.genSalt(SALT_FACTOR, function(err, salt){
-
-        if(err){
+    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
+        if (err) {
             return next(err);
         }
-
-        bcrypt.hash(user.password, salt, null, function(err, hash){
-
-            if(err){
+        bcrypt.hash(user.password, salt, null, function (err: Error, hash: string) {
+            if (err) {
                 return next(err);
             }
-
             user.password = hash;
             next();
-
         });
 
     });
+})
 
-});
+export class User extends Typegoose {
+    //@prop({required: true, lowercase: true, unique: true})
+    @prop({required: true, unique: true})
+    email!: string;
 
-UserSchema.methods.comparePassword = function(passwordAttempt, cb){
+    @prop({required: true})
+    password!: string;
 
-    bcrypt.compare(passwordAttempt, this.password, function(err, isMatch){
+    @prop({required: true, enum: Role, default: Role.reader})
+    role!: string;
 
-        if(err){
-            return cb(err);
-        } else {
-            cb(null, isMatch);
-        }
-    });
+    @instanceMethod
+    comparePassword(this: InstanceType<User>, passwordAttempt: string, cb: (e: Error | null, b?: boolean) => void) {
 
+        bcrypt.compare(passwordAttempt, this.password, function (err, isMatch) {
+
+            if (err) {
+                return cb(err);
+            } else {
+                cb(null, isMatch);
+            }
+        });
+    }
 }
 
-module.exports = mongoose.model('User', UserSchema);
+export const model = new User().getModelForClass(User, {schemaOptions: {timestamps: true}});

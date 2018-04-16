@@ -1,12 +1,12 @@
-var express  = require('express');
-var app      = express();
-var mongoose = require('mongoose');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var cors = require('cors');
+import * as express from 'express';
+let app = express();
+import * as  mongoose from 'mongoose';
+import * as logger from 'morgan';
+import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
 
-var databaseConfig = require('./config/database');
-var router = require('./app/routes');
+let databaseConfig = require('./config/database');
+let router = require('./app/routes');
 
 mongoose.connect(databaseConfig.url);
 

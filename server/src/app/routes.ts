@@ -1,15 +1,17 @@
-var AuthenticationController = require('./controllers/authentication'),
-    TodoController = require('./controllers/todos'),
-    express = require('express'),
-    passportService = require('../config/passport'),
-    passport = require('passport');
+import {Application} from "express";
 
-var requireAuth = passport.authenticate('jwt', {session: false}),
-    requireLogin = passport.authenticate('local', {session: false});
+let AuthenticationController = require('./controllers/authentication');
+let TodoController = require('./controllers/todos');
+import * as express from 'express';
+let passportService = require('../config/passport');
+import * as passport from 'passport';
 
-module.exports = function(app) {
+let requireAuth = passport.authenticate('jwt', {session: false});
+let requireLogin = passport.authenticate('local', {session: false});
 
-    var apiRoutes = express.Router(),
+module.exports = function(app: Application) {
+
+    let apiRoutes = express.Router(),
         authRoutes = express.Router(),
         todoRoutes = express.Router();
 

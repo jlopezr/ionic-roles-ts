@@ -1,14 +1,22 @@
-var jwt = require('jsonwebtoken');
-var User = require('../models/user');
-var authConfig = require('../../config/auth');
+import * as jwt from 'jsonwebtoken';
+import {Request, Response, NextFunction} from "express";
+import {model as User, User as UserType} from '../models/user';
+import {ObjectID} from "bson";
+let authConfig = require('../../config/auth');
 
-function generateToken(user) {
+interface UserInfo {
+    _id: any;
+    email: string;
+    role: string;
+}
+
+function generateToken(user: UserInfo) : string {
     return jwt.sign(user, authConfig.secret, {
         expiresIn: 10080
     });
 }
 
-function setUserInfo(request) {
+function setUserInfo(request: Express.User) : UserInfo {
     return {
         _id: request._id,
         email: request.email,
@@ -16,11 +24,11 @@ function setUserInfo(request) {
     };
 }
 
-exports.login = function(req, res, next) {
+export function login(req: Request, res: Response, next: NextFunction) {
 
     console.log("REQ.USER "+req.user);
 
-    var userInfo = setUserInfo(req.user);
+    let userInfo = setUserInfo(req.user);
 
     res.status(200).json({
         token: 'JWT ' + generateToken(userInfo),
@@ -29,11 +37,11 @@ exports.login = function(req, res, next) {
 
 };
 
-exports.register = function(req, res, next) {
+export function register(req: Request, res: Response, next: NextFunction) {
 
-    var email = req.body.email;
-    var password = req.body.password;
-    var role = req.body.role;
+    let email = req.body.email;
+    let password = req.body.password;
+    let role = req.body.role;
 
     if(!email) {
         return res.status(422).send({error: 'You must enter an email address'});
@@ -53,7 +61,7 @@ exports.register = function(req, res, next) {
             return res.status(422).send({error: 'That email address is already in use'});
         }
 
-        var user = new User({
+        let user = new User({
             email: email,
             password: password,
             role: role
@@ -65,7 +73,7 @@ exports.register = function(req, res, next) {
                 return next(err);
             }
 
-            var userInfo = setUserInfo(user);
+            let userInfo = setUserInfo(user);
 
             res.status(201).json({
                 token: 'JWT ' + generateToken(userInfo),
@@ -78,11 +86,11 @@ exports.register = function(req, res, next) {
 
 };
 
-exports.roleAuthorization = function(roles) {
+export function roleAuthorization(roles: string[]) {
 
-    return function(req, res, next) {
+    return function(req: Request, res: Response, next: NextFunction) {
 
-        var user = req.user;
+        let user = req.user;
 
         User.findById(user._id, function(err, foundUser) {
 
