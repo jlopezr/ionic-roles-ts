@@ -37,7 +37,7 @@ export class Todos {
         'Authorization': this.authService.token
       });
 
-      this.http.post('https://localhost:8080/api/todos', JSON.stringify(todo), {headers: headers})
+      this.http.post('http://localhost:8080/api/todos', JSON.stringify(todo), {headers: headers})
         .subscribe(res => {
           resolve(res);
         }, (err) => {

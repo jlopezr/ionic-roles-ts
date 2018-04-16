@@ -23,7 +23,7 @@ export class HomePage {
     this.todoService.getTodos().then((data) => {
       this.todos = data;
     }, (err) => {
-      console.log("not allowed");
+      console.log("getTodos() not allowed");
     });
 
   }
@@ -56,7 +56,7 @@ export class HomePage {
                 console.log("todo created");
               }, (err) => {
                 this.loading.dismiss();
-                console.log("not allowed");
+                console.log("createTodo() not allowed");
               });
 
             }
@@ -89,7 +89,7 @@ export class HomePage {
 
     }, (err) => {
       this.loading.dismiss();
-      console.log("not allowed");
+      console.log("deleteTodo() not allowed");
     });
   }
 
