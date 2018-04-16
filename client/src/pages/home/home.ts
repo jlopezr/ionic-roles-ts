@@ -1,8 +1,16 @@
-import { Component } from "@angular/core";
-import { NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
-import { Todos } from '../../providers/todos/todos';
-import { Auth } from '../../providers/auth/auth';
-import { LoginPage } from '../login/login';
+import {Component} from "@angular/core";
+import {NavController, ModalController, AlertController, LoadingController, Loading} from 'ionic-angular';
+import {Todos} from '../../providers/todos/todos';
+import {Auth} from '../../providers/auth/auth';
+import {LoginPage} from '../login/login';
+
+interface todo {
+  id: string,
+  title: string,
+  createdAt: string,
+  updatedAt: string,
+  __v: number
+}
 
 @Component({
   selector: 'home-page',
@@ -10,25 +18,25 @@ import { LoginPage } from '../login/login';
 })
 export class HomePage {
 
-  todos: any;
-  loading: any;
+  todos: todo[];
+  loading: Loading;
 
   constructor(public navCtrl: NavController, public todoService: Todos, public modalCtrl: ModalController,
               public alertCtrl: AlertController, public authService: Auth, public loadingCtrl: LoadingController) {
 
   }
 
-  ionViewDidLoad(){
+  ionViewDidLoad() {
 
     this.todoService.getTodos().then((data) => {
-      this.todos = data;
+      this.todos = data as todo[];
     }, (err) => {
       console.log("getTodos() not allowed");
     });
 
   }
 
-  addTodo(){
+  addTodo() {
 
     let prompt = this.alertCtrl.create({
       title: 'Add Todo',
@@ -46,13 +54,13 @@ export class HomePage {
           text: 'Save',
           handler: todo => {
 
-            if(todo){
+            if (todo) {
 
               this.showLoader();
 
               this.todoService.createTodo(todo).then((result) => {
                 this.loading.dismiss();
-                this.todos = result;
+                this.todos = result as todo[];
                 console.log("todo created");
               }, (err) => {
                 this.loading.dismiss();
@@ -71,7 +79,7 @@ export class HomePage {
 
   }
 
-  deleteTodo(todo){
+  deleteTodo(todo) {
 
     this.showLoader();
 
@@ -83,7 +91,7 @@ export class HomePage {
       //Remove locally
       let index = this.todos.indexOf(todo);
 
-      if(index > -1){
+      if (index > -1) {
         this.todos.splice(index, 1);
       }
 
@@ -93,7 +101,7 @@ export class HomePage {
     });
   }
 
-  showLoader(){
+  showLoader() {
 
     this.loading = this.loadingCtrl.create({
       content: 'Authenticating...'
@@ -103,7 +111,7 @@ export class HomePage {
 
   }
 
-  logout(){
+  logout() {
 
     this.authService.logout();
     this.navCtrl.setRoot(LoginPage);

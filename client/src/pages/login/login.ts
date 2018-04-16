@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController, LoadingController} from 'ionic-angular';
+import {NavController, LoadingController, Loading} from 'ionic-angular';
 import {Auth} from '../../providers/auth/auth';
 import {HomePage} from '../home/home';
 import {SignupPage} from '../signup/signup';
@@ -12,7 +12,7 @@ export class LoginPage {
 
   email: string;
   password: string;
-  loading: any;
+  loading: Loading;
 
   constructor(public navCtrl: NavController, public authService: Auth, public loadingCtrl: LoadingController) {
   }
