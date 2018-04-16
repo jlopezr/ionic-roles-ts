@@ -7,7 +7,7 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "tsc; cd build; node server.js"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -20,5 +20,8 @@
     "passport": "^0.3.2",
     "passport-jwt": "^2.1.0",
     "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^9.6.5"
   }
 }
